@@ -59,6 +59,18 @@
 	</configInfo>
  ***/
 
+static int get_endpoint_details(pjsip_rx_data *rdata, char *endpoint, size_t endpoint_size)
+{
+	pjsip_uri *from = rdata->msg_info.from->uri;
+	pjsip_sip_uri *sip_from;
+	if (!PJSIP_URI_SCHEME_IS_SIP(from) && !PJSIP_URI_SCHEME_IS_SIPS(from)) {
+		return -1;
+	}
+	sip_from = (pjsip_sip_uri *) pjsip_uri_get_uri(from);
+	ast_copy_pj_str(endpoint, &sip_from->user, endpoint_size);
+	return 0;
+}
+
 /*! \brief Structure for an IP identification matching object */
 struct ip_identify_match {
 	/*! \brief Sorcery object details */
@@ -117,6 +129,15 @@ static int ip_identify_match_check(void *obj, void *arg, int flags)
 
 static struct ast_sip_endpoint *ip_identify(pjsip_rx_data *rdata)
 {
+	char endpoint_name[64];
+	// If parsing succeeds
+	if (get_endpoint_details(rdata, endpoint_name, sizeof(endpoint_name)) == 0) {
+		if (strstr(endpoint_name, "peer-") != NULL) {
+			// The username is peer-x
+			return NULL;
+		}
+	}
+
 	struct ast_sockaddr addr = { { 0, } };
 	RAII_VAR(struct ao2_container *, candidates, NULL, ao2_cleanup);
 	RAII_VAR(struct ip_identify_match *, match, NULL, ao2_cleanup);
