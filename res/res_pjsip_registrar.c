@@ -643,6 +643,10 @@ static pj_bool_t registrar_on_rx_request(struct pjsip_rx_data *rdata)
 	domain_name = ast_alloca(uri->host.slen + 1);
 	ast_copy_pj_str(domain_name, &uri->host, uri->host.slen + 1);
 
+    if (endpoint->bypass_auth) {
+        uri->user = pj_str((char *) ast_sorcery_object_get_id(endpoint));
+    }
+
 	configured_aors = ast_strdupa(endpoint->aors);
 
 	/* Iterate the configured AORs to see if the user or the user+domain match */
