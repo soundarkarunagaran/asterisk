@@ -636,6 +636,7 @@ struct ast_sip_endpoint {
 	unsigned int usereqphone;
 	/*! Do we send messages for connected line updates for unanswered incoming calls immediately to this endpoint? */
 	unsigned int rpid_immediate;
+        unsigned int bypass_auth;
 };
 
 /*!
