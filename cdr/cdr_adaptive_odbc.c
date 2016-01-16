@@ -723,6 +723,10 @@ static int odbc_log(struct ast_cdr *cdr)
 			} else if (entry->filtervalue
 				&& ((!entry->negatefiltervalue && entry->filtervalue[0] != '\0')
 					|| (entry->negatefiltervalue && entry->filtervalue[0] == '\0'))) {
+				ast_verb(4, "CDR column '%s' was not set and does not match filter of"
+					" %s'%s'.  Cancelling this CDR.\n",
+					entry->cdrname, entry->negatefiltervalue ? "!" : "",
+					entry->filtervalue);
 				goto early_release;
 			}
 		}
