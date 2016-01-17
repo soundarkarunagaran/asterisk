@@ -1519,10 +1519,6 @@ static struct ast_channel *wait_for_answer(struct ast_channel *in,
 				}
 				/* Fall through */
 			case AST_FRAME_TEXT:
-				if (single && ast_write(in, f)) {
-					ast_log(LOG_WARNING, "Unable to write frametype: %u\n",
-						f->frametype);
-				}
 				break;
 			case AST_FRAME_HTML:
 				if (single && !ast_test_flag64(outgoing, DIAL_NOFORWARDHTML)
